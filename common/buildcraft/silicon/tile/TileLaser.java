@@ -59,6 +59,7 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable,
 
     private final SafeTimeTracker clientLaserMoveInterval = new SafeTimeTracker(5, 10);
     private final SafeTimeTracker serverTargetMoveInterval = new SafeTimeTracker(10, 20);
+    private final SafeTimeTracker forcedEnergySyncInterval = new SafeTimeTracker(20 * 10, 20);
 
     private final List<BlockPos> targetPositions = new ArrayList<>();
     private BlockPos targetPos;
@@ -223,7 +224,9 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable,
         }
 
         int renderState = getRenderState();
-        if (!Objects.equals(lastRenderTargetPos, targetPos) || lastRenderState != renderState) {
+        if (!Objects.equals(lastRenderTargetPos, targetPos)
+                || lastRenderState != renderState
+                || forcedEnergySyncInterval.markTimeIfDelay(world)) {
             lastRenderTargetPos = targetPos;
             lastRenderState = renderState;
             sendNetworkUpdate(NET_RENDER_DATA);

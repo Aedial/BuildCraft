@@ -197,10 +197,10 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable,
         if (target != null) {
             long max = getMaxPowerPerTick();
             long stored = battery.getStored();
-            long minStoredForMaxPower = Math.max(0, battery.getCapacity() / 2 - max);
+            long halfCapacity = battery.getCapacity() / 2;
+            long minStoredForMaxPower = Math.max(0, halfCapacity - max);
             if (stored < minStoredForMaxPower) {
-                max *= stored + max;
-                max /= battery.getCapacity() / 2;
+                max = (long) ((double) max * (stored + max) / halfCapacity);
             }
             max = Math.min(Math.min(max, getMaxPowerPerTick()), target.getRequiredLaserPower());
             long power = battery.extractPower(0, max);
